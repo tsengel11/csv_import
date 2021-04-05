@@ -1,11 +1,12 @@
 <?php
 
-function db_connect(){
+// Data base functions 
+function db_connect($db_server,$dbuser,$dbpass,$dbname){
     $config = new stdClass();
-    $config->dbserver = '127.0.0.1';
-    $config->dbuser='root';
-    $config->dbpass='';
-    $config->dbname='test';
+    $config->dbserver = $db_server;
+    $config->dbuser=$dbuser;
+    $config->dbpass=$dbpass;
+    $config->dbname=$dbname;
 
     $connection  = mysqli_connect($config->dbserver,
                                 $config->dbuser,
@@ -56,12 +57,28 @@ function db_connect(){
 
     }
 
+    function check_cliparameter(){
+    
+        $err_msg = "";
+        if(!isset($options['u']))
+        {
+            $err_msg.= " \n please enter MySQL - username";
+        }
+        elseif (!isset($options['p'])) 
+        {
+            $err_msg.= " \n please enter MySQL - password";
+        } 
 
-$clioption = array(
-    "file:",
-    "create_table::",
-    "dry_run::",
-    "help");
+        echo $err_msg;
+
+    }
+
+
+    $clioption = array(
+        "file:",
+        "create_table::",
+        "dry_run::",
+        "help::");
     
     $cliparameter="";
     $cliparameter.="u:";
@@ -86,5 +103,11 @@ if(isset($options['help']))
 }
 elseif(isset($options['create_table']))
 {
-    
+    var_dump($options);
+    //check_cliparameter();
+
+    $db = db_connect('127.0.0.1',$options['u'],$options['p'],$options['h']);
+
+
+    db_close($db);
 }
