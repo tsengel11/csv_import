@@ -131,12 +131,18 @@ elseif(isset($options['file']))
 
     $csvdata= get_csv($options['file']);
     print_r($csvdata);
-    $db = db_connect();
+    $db = db_connect('127.0.0.1',$options['u'],$options['h']);
 
     foreach($csvdata as $data)
     {
+        if (filter_var($data[2], FILTER_VALIDATE_EMAIL)) 
+         {
+            $email = $data[2];
+          } else {
+            echo("\n$data[2] is not a valid email address");
+          }
 
-        insert_data($db,convert_capitilize($data[0]),convert_capitilize($data[1]),$email);
+        //insert_data($db,convert_capitilize($data[0]),convert_capitilize($data[1]),$email);
     }
     db_close($db);
 }
