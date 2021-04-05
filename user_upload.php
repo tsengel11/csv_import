@@ -73,6 +73,16 @@ function db_connect($db_server,$dbuser,$dbname){
 
     }
 
+    function get_csv($filename)
+    {
+
+    $user_array = array_map('str_getcsv', file($filename));
+
+    array_shift($user_array);
+
+    return($user_array);
+    }
+
 
     $clioption = array(
         "file:",
@@ -111,7 +121,14 @@ elseif(isset($options['create_table']))
     create_table($db);
     db_close($db);
 }
-elseif(isset($options['dry_run']))
+elseif(isset($options['file']))
 {
+    echo "file ";
 
+    $csvdata= get_csv($options['file']);
+    print_r($csvdata);
+}
+elseif(isset($options['file'])&&isset($options['dry_run']))
+{
+    echo "file & dry_run";
 }
