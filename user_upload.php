@@ -49,7 +49,8 @@ function db_connect($db_server,$dbuser,$dbname){
         $sql = "INSERT into userlist(name,surname,email)
         VALUES ('$name','$surname','$email')";
 
-        if(mysqli_query($connection, $sql)){  
+        if(mysqli_query($connection, $sql))
+        {  
             echo "\r\nRecord inserted successfully";  
            }else{  
             echo "\r\nCould not insert record: ". mysqli_error($connection);  
@@ -138,11 +139,12 @@ elseif(isset($options['file']))
         if (filter_var($data[2], FILTER_VALIDATE_EMAIL)) 
          {
             $email = $data[2];
-          } else {
+            insert_data($db,convert_capitilize($data[0]),convert_capitilize($data[1]),$email);
+         } else {
             echo("\n$data[2] is not a valid email address");
-          }
+         }
 
-        //insert_data($db,convert_capitilize($data[0]),convert_capitilize($data[1]),$email);
+        
     }
     db_close($db);
 }
