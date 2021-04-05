@@ -56,6 +56,10 @@ function db_connect($db_server,$dbuser,$dbname){
            }  
 
     }
+    function convert_capitilize($text)
+    {
+        return ucwords(strtolower($text));
+    }
 
     function check_cliparameter(){
     
@@ -127,6 +131,14 @@ elseif(isset($options['file']))
 
     $csvdata= get_csv($options['file']);
     print_r($csvdata);
+    $db = db_connect();
+
+    foreach($csvdata as $data)
+    {
+
+        insert_data($db,convert_capitilize($data[0]),convert_capitilize($data[1]),$email);
+    }
+    db_close($db);
 }
 elseif(isset($options['file'])&&isset($options['dry_run']))
 {
