@@ -1,11 +1,11 @@
 <?php
 
 // Data base functions 
-function db_connect($db_server,$dbuser,$dbpass,$dbname){
+function db_connect($db_server,$dbuser,$dbname){
     $config = new stdClass();
     $config->dbserver = $db_server;
     $config->dbuser=$dbuser;
-    $config->dbpass=$dbpass;
+    $config->dbpass='';
     $config->dbname=$dbname;
 
     $connection  = mysqli_connect($config->dbserver,
@@ -106,8 +106,12 @@ elseif(isset($options['create_table']))
     var_dump($options);
     //check_cliparameter();
 
-    $db = db_connect('127.0.0.1',$options['u'],$options['p'],$options['h']);
+    $db = db_connect('127.0.0.1',$options['u'],$options['h']);
 
-
+    create_table($db);
     db_close($db);
+}
+elseif(isset($options['dry_run']))
+{
+
 }
