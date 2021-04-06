@@ -16,7 +16,7 @@ function db_connect($db_server,$dbuser,$dbname){
     if (!$connection) {
         die("Could not connect:" . mysqli_connect_error());
       };
-     echo 'Connected successfully';
+     echo 'Connected Database successfully';
 
     return $connection;
  }
@@ -46,8 +46,10 @@ function db_connect($db_server,$dbuser,$dbname){
 
     function insert_data($connection,$name,$surname,$email)
     {
-        $sql = "INSERT into userlist(name,surname,email)
+        $sql = "INSERT into test.userlist(name,surname,email)
         VALUES ('$name','$surname','$email')";
+
+        echo $sql;
 
         if(mysqli_query($connection, $sql))
         {  
