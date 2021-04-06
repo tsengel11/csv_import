@@ -37,10 +37,11 @@ function create_table($connection) // Create table function
 
         $sql = "create table userlist(
                 id INT AUTO_INCREMENT, 
-                name VARCHAR(50) NOT NULL,
-                surname VARCHAR(50) NOT NULL,
-                email VARCHAR(50) NOT NULL,
-                PRIMARY KEY (`id`))";
+                name VARCHAR(100) NOT NULL,
+                surname VARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL,
+                PRIMARY KEY (`id`),
+                UNIQUE INDEX `email_UNIQUE` (`email`))";
         if(mysqli_query($connection,$sql))
         {
             echo "\r\nUser table created successfully";
@@ -51,7 +52,7 @@ function create_table($connection) // Create table function
         }
     }
 
-    function insert_data($connection,$name,$surname,$email) //insert data function
+    function insert_data($connection,$name,$surname,$email) //insert data functiona
     {
         $sql = 'INSERT into test.userlist(name,surname,email)
         VALUES ("'.trim($name).'","'.trim($surname).'","'.trim($email).'")';
