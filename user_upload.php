@@ -80,14 +80,11 @@ function create_table($connection) // Create table function
         array_shift($user_array);
         return($user_array);
     }
-
-
     $clioption = array(
         "file:",
         "create_table",
         "dry_run",
         "help");
-    
     $cliparameter="";
     $cliparameter.="u:";
     $cliparameter.="p:";
@@ -139,7 +136,7 @@ elseif(isset($options['file'])) //  Checking the normal option
                     $email = $data[2];
                     if(!isset($options['dry_run'])) // Checking the dry run option 
                     {
-                        insert_data($db,convert_capitilize($data[0]),convert_capitilize($data[1]),$email);
+                        insert_data($db,convert_capitilize($data[0]),convert_capitilize($data[1]),strtolower($email));
                     }
                     
                 } else 
