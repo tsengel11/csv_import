@@ -1,11 +1,11 @@
 <?php
 
 // Data base functions 
-function db_connect($db_server,$dbuser,$dbname){
+function db_connect($db_server,$dbuser,$dbpass,$dbname){
     $config = new stdClass();
     $config->dbserver = $db_server;
     $config->dbuser=$dbuser;
-    $config->dbpass='';
+    $config->dbpass=$dbpass;
     $config->dbname=$dbname;
 
     $connection  = mysqli_connect($config->dbserver,
@@ -49,13 +49,15 @@ function db_connect($db_server,$dbuser,$dbname){
         $sql = "INSERT into test.userlist(name,surname,email)
         VALUES ('$name','$surname','$email')";
 
-        echo $sql;
+        //echo $sql;
 
         if(mysqli_query($connection, $sql))
         {  
             echo "\r\nRecord inserted successfully";  
            }else{  
-            echo "\r\nCould not insert record: ". mysqli_error($connection);  
+            echo "\r\nCould not insert record: ". mysqli_error($connection);
+            echo "\r\n";
+            echo $sql;
            }  
 
     }
@@ -82,12 +84,9 @@ function db_connect($db_server,$dbuser,$dbname){
 
     function get_csv($filename)
     {
-
-    $user_array = array_map('str_getcsv', file($filename));
-
-    array_shift($user_array);
-
-    return($user_array);
+        $user_array = array_map('str_getcsv', file($filename));
+        array_shift($user_array);
+        return($user_array);
     }
 
 
@@ -101,6 +100,7 @@ function db_connect($db_server,$dbuser,$dbname){
     $cliparameter.="u:";
     $cliparameter.="p:";
     $cliparameter.="h:";
+    $cliparameter.="s";
     
     $options = getopt($cliparameter,$clioption);
 
@@ -116,15 +116,14 @@ if(isset($options['help']))
     \n -u – MySQL username
     \n -p – MySQL password
     \n -h – MySQL host
+    \n -s – MySQL schema name
     \n --help – which will output the above list of directives with details.";
 }
 elseif(isset($options['create_table']))
 {
     var_dump($options);
     //check_cliparameter();
-
-    $db = db_connect('127.0.0.1',$options['u'],$options['h']);
-
+    $db = db_connect($options['h'],$options['u'],$options['h'],$options['s']);
     create_table($db);
     db_close($db);
 }
@@ -133,12 +132,12 @@ elseif(isset($options['file']))
     echo "file ";
 
     $csvdata= get_csv($options['file']);
-    print_r($csvdata);
-    $db = db_connect('127.0.0.1',$options['u'],$options['h']);
+    //print_r($csvdata);
+    $db = db_connect($options['h'],$options['u'],$options['p'],$options['s']);
 
     foreach($csvdata as $data)
     {
-        if (filter_var($data[2], FILTER_VALIDATE_EMAIL)) 
+        if (filter_var($data[2], FILTER_VALIDATE_EMAIL)) //Checking the email validation
          {
             $email = $data[2];
             insert_data($db,convert_capitilize($data[0]),convert_capitilize($data[1]),$email);
