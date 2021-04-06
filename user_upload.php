@@ -47,7 +47,7 @@ function db_connect($db_server,$dbuser,$dbpass,$dbname){
     function insert_data($connection,$name,$surname,$email)
     {
         $sql = 'INSERT into test.userlist(name,surname,email)
-        VALUES ("'.$name.'","'.$surname.'","'.$email.'")';
+        VALUES ("'.trim($name).'","'.trim($surname).'","'.trim($email).'")';
 
         //echo $sql;
 
@@ -127,9 +127,8 @@ elseif(isset($options['create_table']))
     create_table($db);
     db_close($db);
 }
-elseif(isset($options['file']))
+elseif(isset($options['file'])&&!isset($options['dry_run'])) //  Checking the normal option
 {
-    echo "file ";
 
     $csvdata= get_csv($options['file']);
     //print_r($csvdata);
@@ -144,12 +143,28 @@ elseif(isset($options['file']))
          } else {
             echo("\n$data[2] is not a valid email address");
          }
-
-        
     }
     db_close($db);
 }
-elseif(isset($options['file'])&&isset($options['dry_run']))
+
+
+elseif(isset($options['file'])&&isset($options['dry_run'])) // Checking the dry run option
 {
-    echo "file & dry_run";
+
+
+    $csvdata= get_csv($options['file']);
+    //print_r($csvdata);
+    $db = db_connect($options['h'],$options['u'],$options['p'],$options['s']);
+
+    foreach($csvdata as $data)
+    {
+        if (filter_var($data[2], FILTER_VALIDATE_EMAIL)) //Checking the email validation
+         {
+            $email = $data[2];
+            //insert_data($db,convert_capitilize($data[0]),convert_capitilize($data[1]),$email);
+         } else {
+            echo("\n$data[2] is not a valid email address");
+         }  
+    }
+    db_close($db);
 }
