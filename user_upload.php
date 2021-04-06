@@ -46,8 +46,8 @@ function db_connect($db_server,$dbuser,$dbpass,$dbname){
 
     function insert_data($connection,$name,$surname,$email)
     {
-        $sql = "INSERT into test.userlist(name,surname,email)
-        VALUES ('$name','$surname','$email')";
+        $sql = 'INSERT into test.userlist(name,surname,email)
+        VALUES ("'.$name.'","'.$surname.'","'.$email.'")';
 
         //echo $sql;
 
