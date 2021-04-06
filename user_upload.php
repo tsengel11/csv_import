@@ -51,39 +51,27 @@ function create_table($connection) // Create table function
         }
     }
 
-    function insert_data($connection,$name,$surname,$email)
+    function insert_data($connection,$name,$surname,$email) //insert data function
     {
         $sql = 'INSERT into test.userlist(name,surname,email)
         VALUES ("'.trim($name).'","'.trim($surname).'","'.trim($email).'")';
 
-        //echo $sql;
 
         if(mysqli_query($connection, $sql))
         {  
             echo "\r\nRecord inserted successfully";  
-           }else{  
+           }
+        else
+        {  
             echo "\r\nCould not insert record: ". mysqli_error($connection);
             echo "\r\n";
             echo $sql;
            }  
 
     }
-    function convert_capitilize($text)
+    function convert_capitilize($text) 
     {
         return ucwords(strtolower($text));
-    }
-
-    function check_cliparameter(){
-    
-        if(isset($options['u'])&&isset($options['p'])&&isset($options['h'])&&isset($options['s']))
-        {
-        }
-        else 
-        {
-            die("Missing the database parameter, see --help\n");
-        }
-
-
     }
 
     function get_csv($filename)
@@ -95,16 +83,16 @@ function create_table($connection) // Create table function
 
 
     $clioption = array(
-        "file::",
-        "create_table::",
-        "dry_run::",
-        "help::");
+        "file:",
+        "create_table",
+        "dry_run",
+        "help");
     
     $cliparameter="";
     $cliparameter.="u:";
     $cliparameter.="p:";
     $cliparameter.="h:";
-    $cliparameter.="s";
+    $cliparameter.="s:";
     
     $options = getopt($cliparameter,$clioption);
 
@@ -115,42 +103,62 @@ if(isset($options['help']))
 }
 elseif(isset($options['create_table']))
 {
-    check_cliparameter();
-    var_dump($options);
-    
-    $db = db_connect($options['h'],$options['u'],$options['h'],$options['s']);
-    create_table($db);
-    db_close($db);
+    try
+    {
+        if(isset($options['u'])&&isset($options['p'])&&isset($options['h'])&&isset($options['s'])) //Checking the short options. All small options will be required.
+        {
+            $db = db_connect($options['h'],$options['u'],$options['p'],$options['s']);
+            create_table($db);
+            db_close($db);
+        }   
+        else
+        {
+            echo "Missing database parameter, see --help";
+        }
+    }
+    catch(Exception $e)
+    {
+        echo 'Message: '.$e->getMessage();
+    }
+
 }
 elseif(isset($options['file'])) //  Checking the normal option
 {
-    var_dump($options);
-    if(isset($options['u'])&&isset($options['p'])&&isset($options['h'])&&isset($options['s'])) //Checking the short options 
+    try
     {
-        $csvdata= get_csv($options['file']);
-        //print_r($csvdata);
-        $db = db_connect($options['h'],$options['u'],$options['p'],$options['s']);
-
-        foreach($csvdata as $data)
-        {
-            if (filter_var($data[2], FILTER_VALIDATE_EMAIL)) //Checking the email validation
+        if(isset($options['u'])&&isset($options['p'])&&isset($options['h'])&&isset($options['s'])) //Checking the short options     
+        {   
+            $csvdata= get_csv($options['file']);
+            //print_r($csvdata);
+            $db = db_connect($options['h'],$options['u'],$options['p'],$options['s']);
+    
+            foreach($csvdata as $data)
             {
-                $email = $data[2];
-                if(!isset($options['dry_run'])) // Checking the Dry run option 
+                if (filter_var($data[2], FILTER_VALIDATE_EMAIL)) //Checking the email validation
                 {
-                    insert_data($db,convert_capitilize($data[0]),convert_capitilize($data[1]),$email);
+                    $email = $data[2];
+                    if(!isset($options['dry_run'])) // Checking the dry run option 
+                    {
+                        insert_data($db,convert_capitilize($data[0]),convert_capitilize($data[1]),$email);
+                    }
+                    
+                } else 
+                {
+                    echo("\n$data[2] is not a valid email address");
                 }
-                
-            } else {
-                echo("\n$data[2] is not a valid email address");
             }
+            db_close($db);
         }
-        db_close($db);
+        else
+        {
+            echo "Missing database parameter, see --help";
+        }
     }
-    else
+    catch(Exception $e)
     {
-        echo "Missing database parameter, see --help";
+        echo 'Message: '.$e->getMessage();
     }
+    
 }
 
 else
